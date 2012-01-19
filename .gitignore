@@ -1,0 +1,6 @@
+build/*.so
+build/*.o
+build/tests/*
+Xcode/
+*.dSYM
+.DS_Store
