@@ -33,6 +33,14 @@ ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len)
     ceBtreeNode **dest = (ceBtreeNode **)
         malloc(sizeof(ceBtreeNode *) * size);
     
+    // Used for reallocation
+    ceBtreeNode **tmp_dest = NULL;
+    
+    // Handle OOM
+    if (dest == NULL) {
+        return NULL;
+    }
+    
     // Initialize some variables
     alen = 0;
     skip_lookup = 0;
@@ -139,8 +147,16 @@ ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len)
             // Make sure we have enough memory. Reallocate if needed
             if (alen == size) {
                 size = size + CE_BTREE_ARRAY_CHUNK;
-                dest = realloc(dest,
+                tmp_dest = realloc(dest,
                     sizeof(ceBtreeNode *) * size);
+                
+                // Handle OOM
+                if (tmp_dest == NULL) {
+                    free(dest);
+                    return NULL;
+                }
+                
+                dest = tmp_dest;
             }
         }
         

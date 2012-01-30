@@ -25,6 +25,10 @@ ceBtree *ceBtree_Init(
     ceBtree *tree = (ceBtree *)
         malloc(sizeof(ceBtree));
     
+    if (tree == NULL) {
+        return NULL;
+    }
+    
     tree->root = NULL;
     tree->cmpfn = cmpfn;
     tree->freefn = freefn;

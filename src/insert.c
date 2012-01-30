@@ -29,6 +29,11 @@ ceBtree_Status ceBtree_Insert(
         tree->root = (ceBtreeNode *)
             malloc(sizeof(ceBtreeNode));
         
+        // Handle OOM
+        if (tree->root == NULL) {
+            return CE_BTREE_STATUS_ERR;
+        }
+        
         // Initialize new node, using macro
         ceBtreeNodeInit(tree->root, key, data);
         tree->root->parent = NULL;
@@ -55,6 +60,11 @@ ceBtree_Status ceBtree_Insert(
             cur->left = (ceBtreeNode *)
                 malloc(sizeof(ceBtreeNode));
             
+            // Handle OOM
+            if (cur->left == NULL) {
+                return CE_BTREE_STATUS_ERR;
+            }
+            
             // Initialize new node, using macro
             ceBtreeNodeInit(cur->left, key, data);
             cur->left->parent = cur;
@@ -74,6 +84,11 @@ ceBtree_Status ceBtree_Insert(
             // Allocate
             cur->right = (ceBtreeNode *)
                 malloc(sizeof(ceBtreeNode));
+            
+            // Handle OOM
+            if (cur->right == NULL) {
+                return CE_BTREE_STATUS_ERR;
+            }
             
             // Initialize new node, using macro
             ceBtreeNodeInit(cur->right, key, data);
