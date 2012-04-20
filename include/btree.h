@@ -10,10 +10,6 @@
 #define CE_BTREE_COLOR_BLACK 0
 #define CE_BTREE_COLOR_RED 1
 
-/* Define color type. A typedef for u_char is used instead of an enum
-   because the size of an enum can be as large as 4 bytes. */
-typedef uint8_t ceBtree_Color;
-
 // Enum returned by comparison function pointers
 enum ceBtree_Compare {
     CE_BTREE_COMPARE_EQ,
@@ -40,7 +36,7 @@ struct ceBtreeNode {
     struct ceBtreeNode *right;
     struct ceBtreeNode *parent;
     
-    ceBtree_Color color;
+    uint8_t color;
 };
 
 typedef struct ceBtreeNode ceBtreeNode;
@@ -69,6 +65,10 @@ ceBtree *ceBtree_Init(
 ceBtree_Status ceBtree_Insert(ceBtree *tree, void *key, void *data, int replace);
 ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key);
 int ceBtree_KeyExists(ceBtree *tree, ceBtreeNode *start, void *key);
+
+// Rotations
+ceBtree_Status ceBtree_RotateLeft(ceBtree *tree);
+ceBtree_Status ceBtree_RotateRight(ceBtree *tree);
 
 // Functions, for converting Btree to Array
 ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len);

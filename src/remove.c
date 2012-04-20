@@ -125,6 +125,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                         cur = cur->left;
                         free(tree->root);
                         tree->root = cur;
+                        tree->root->parent = NULL;
                     } else {
                         // Normal case
                         parent = cur->parent;
@@ -146,6 +147,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                         cur = cur->right;
                         free(tree->root);
                         tree->root = cur;
+                        tree->root->parent = NULL;
                     } else {
                         // Normal case
                         parent = cur->parent;

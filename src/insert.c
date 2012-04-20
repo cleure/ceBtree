@@ -8,7 +8,17 @@
            /    \
          !9!    !15!
 
+Red Black Tree Rules:
+
+
+    - A node is either red or black.
+    - The root is black.
+    - All leaves are the same color as the root.
+    - Both children of every red node are black.
+    - Every simple path from a given node to any of its descendant leaves contains the same number of black nodes.
+
 */
+
 
 /**
 * Insert item into tree.
@@ -70,6 +80,8 @@ ceBtree_Status ceBtree_Insert(
             cur->left->parent = cur;
             
             return CE_BTREE_STATUS_OK;
+            
+            //SETUP_NEW_NODE(cur->left, key, data, cur);
         }
         
         // if a < b
@@ -95,6 +107,8 @@ ceBtree_Status ceBtree_Insert(
             cur->right->parent = cur;
             
             return CE_BTREE_STATUS_OK;
+            
+            //SETUP_NEW_NODE(cur->right, key, data, cur);
         }
         
         // if a == b

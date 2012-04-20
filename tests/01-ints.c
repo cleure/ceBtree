@@ -52,6 +52,8 @@ int main(int argc, char **argv)
     i = 41;
     ceBtree_Remove(tree, NULL, (void *)&i);
     
+    printf("Root: %d\n", *(int *)tree->root->data);
+    
     int len;
     array = ceBtreeToArray(tree, tree->root, &len);
     //printf("Len: %d\n", len);

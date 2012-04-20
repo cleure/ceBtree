@@ -7,6 +7,12 @@
 TODO:
     - Implement as Red/Black tree, when flag set
 
+How to implement red/black trees:
+    - insert.c could be macro-tized, for both binary tree and
+      red black trees. Function pointers on the tree struct would
+      point to the correct insert function.
+    - Insert function could use if/else statements...
+
 */
 
 /**
@@ -75,6 +81,84 @@ int ceBtree_KeyExists(ceBtree *tree, ceBtreeNode *start, void *key)
     }
     
     return 0;
+}
+
+/**
+* Perform a left rotation
+*
+* @param    ceBtree *tree
+* @return   ceBtree_Status
+**/
+ceBtree_Status ceBtree_RotateLeft(ceBtree *tree)
+{
+    ceBtreeNode *cur,
+                *oldroot;
+    
+    // Can't rotate anymore
+    if (tree->root == NULL || tree->root->right == NULL) {
+        return CE_BTREE_STATUS_OK;
+    }
+    
+    // Pointer to oldroot
+    oldroot = tree->root;
+    
+    // Set new root
+    tree->root = tree->root->right;
+    tree->root->parent = NULL;
+    
+    // Break apart from tree
+    oldroot->right = NULL;
+    
+    // Find left-most leaf
+    cur = tree->root;
+    while (cur->left != NULL) {
+        cur = cur->left;
+    }
+    
+    // Link trees back together
+    cur->left = oldroot;
+    cur->left->parent = cur;
+    
+    return CE_BTREE_STATUS_OK;
+}
+
+/**
+* Perform a right rotation
+*
+* @param    ceBtree *tree
+* @return   ceBtree_Status
+**/
+ceBtree_Status ceBtree_RotateRight(ceBtree *tree)
+{
+    ceBtreeNode *cur,
+                *oldroot;
+    
+    // Can't rotate anymore
+    if (tree->root == NULL || tree->root->left == NULL) {
+        return CE_BTREE_STATUS_OK;
+    }
+    
+    // Pointer to oldroot
+    oldroot = tree->root;
+    
+    // Set new root
+    tree->root = tree->root->left;
+    tree->root->parent = NULL;
+    
+    // Break apart from tree
+    oldroot->left = NULL;
+    
+    // Find right-most leaf
+    cur = tree->root;
+    while (cur->right != NULL) {
+        cur = cur->right;
+    }
+    
+    // Link trees back together
+    cur->right = oldroot;
+    cur->right->parent = cur;
+    
+    return CE_BTREE_STATUS_OK;
 }
 
 /**
