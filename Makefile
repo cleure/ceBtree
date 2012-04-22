@@ -13,7 +13,8 @@ include/%.h:
 
 headers :=\
 	include/btree.h\
-	include/helpers.h
+	include/helpers.h\
+	src/insert-template.c
 
 objects :=\
 		build/btree.o\
