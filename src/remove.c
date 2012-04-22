@@ -30,6 +30,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
     cur = start;
     
     while (cur != NULL) {
+    
         // Traverse until key matches, or end is reached
         res = tree->cmpfn(cur->key, key);
         if (res == CE_BTREE_COMPARE_GT) {
@@ -59,6 +60,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                       node, and the child is either free'd or replaced by it's
                       child. */
             if (cur->left == NULL && cur->right == NULL) {
+            
                 // 1) Node has no children
             
                 if (cur->parent == NULL) {
@@ -77,6 +79,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                     }
                 }
             } else if (cur->left != NULL && cur->right != NULL) {
+                printf("Case 3\n");
 
                 // 3) Node has 2 children
                 ceBtreeNode *replacement = cur->right,
@@ -119,6 +122,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                     }
                 }
             } else {
+            
                 // 2) Node has 1 child
                 if (cur->left != NULL) {
                     if (cur->parent == NULL) {
@@ -132,7 +136,19 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                         parent = cur->parent;
                         cur = cur->left;
                         
-                        if (parent->left == cur) {
+                        /*
+                        
+                        Delete 14:
+                        
+                              16
+                            /    \
+                           14     19
+                          /  \    / \
+                         12  15  18  21
+                         
+                        */
+                        
+                        if (parent->left == cur->parent) {
                             free(parent->left);
                             parent->left = cur;
                         } else {
@@ -154,7 +170,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                         parent = cur->parent;
                         cur = cur->right;
                         
-                        if (parent->left == cur) {
+                        if (parent->left == cur->parent) {
                             free(parent->left);
                             parent->left = cur;
                         } else {

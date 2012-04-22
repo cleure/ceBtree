@@ -41,6 +41,12 @@ int main(int argc, char **argv)
     
     printf("Right Height: %d\n", height);
     
+    i = 30;
+    while (i < 50) {
+        tree->remove(tree, NULL, (void *)&i);
+        i+= 2;
+    }
+    
     cur = tree->root;
     int len;
     array = ceBtreeToArray(tree, tree->root, &len);

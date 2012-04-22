@@ -34,6 +34,12 @@ ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len)
     if (root == NULL) {
         root = tree->root;
     }
+    
+    // Check error
+    if (root == NULL) {
+        *len = 0;
+        return NULL;
+    }
 
     // These will be used for looping
     int not_in_array, skip_lookup, alen;
