@@ -2,6 +2,24 @@
 #include "helpers.h"
 #include <stdlib.h>
 
+/*
+
+TODO: To simplify this, a "visited" variable could be added to the node struct,
+      and initialized to zero by default. Before this function loops, it sets
+      a variable to the current "visited" value. Once in the loop, it
+      increments the "visited" variable on each node, and filters the already
+      visited nodes out by comparing the equality of the nodes visited var, to
+      the visited var which was stored before looping.
+      
+      Downsides:
+        - Increased memory consumption for nodes
+        - Not thread safe without external mutexes
+
+Other Solutions:
+    - Hash table of visited nodes (pointer address could be the index)
+
+*/
+
 /**
 * Convert binary tree to array, in ascending order.
 *

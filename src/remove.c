@@ -77,6 +77,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                     }
                 }
             } else if (cur->left != NULL && cur->right != NULL) {
+
                 // 3) Node has 2 children
                 ceBtreeNode *replacement = cur->right,
                             *right = NULL,

@@ -3,25 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-/*
-
-                     16
-                   /    \
-                  10    18
-                 /  \   / \
-                5   12 17  22
-               / \ /  \    / \
-              3  6 11  14  20 30
-             / \      /     \   \
-            1   4    13      21  41
-                                 /
-                                38
-
-*/
-
 int arrr[] = {
-    16, 10, 18, 5, 12, 17, 22, 3, 6, 11, 14, 20, 30, 1, 4, 13, 21, 41, 38
+    30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70
 };
 
 void my_free_function(ceBtreeNode *node)
@@ -35,7 +18,7 @@ int main(int argc, char **argv)
 {
     ceBtreeNode *cur;
     ceBtreeNode **array;
-    ceBtree *tree = ceBtree_Init(
+    ceBtree *tree = ceRBtree_Init(
         ceBtreeIntcmp,
         my_free_function);
     
@@ -46,6 +29,17 @@ int main(int argc, char **argv)
         *ptr = arrr[i];
         tree->insert(tree, (void *)ptr, (void *)ptr, 1);
     }
+    
+    // Test right height
+    int height;
+    cur = tree->root;
+    height = 0;
+    while (cur->right != NULL) {
+        cur = cur->right;
+        height++;
+    }
+    
+    printf("Right Height: %d\n", height);
     
     cur = tree->root;
     

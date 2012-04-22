@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         char *tmp = malloc((sizeof(char) * strlen(table[i])) + 1);
         strcpy(tmp, table[i]);
         
-        ceBtree_Insert(tree, tmp, tmp, 0);
+        tree->insert(tree, tmp, tmp, 0);
         ++i;
     }
     

@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     for (i = 0; i < l; ++i) {
         int *ptr = malloc(sizeof(int));
         *ptr = arrr[i];
-        ceBtree_Insert(tree, (void *)ptr, (void *)ptr, 1);
+        tree->insert(tree, (void *)ptr, (void *)ptr, 1);
     }
     
     cur = tree->root;

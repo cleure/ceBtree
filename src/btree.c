@@ -39,6 +39,40 @@ ceBtree *ceBtree_Init(
     tree->cmpfn = cmpfn;
     tree->freefn = freefn;
     tree->is_redblack = 0;
+    tree->insert = ceBtree_Insert;
+    tree->remove = ceBtree_Remove;
+    
+    return tree;
+}
+
+/**
+* Initialize a new rbtree.
+*
+* @param    ceBtree_Compare (*cmpfn)(void *, void *)
+*           - pointer to a user defined function, which is used
+*             for key comparisons.
+*
+* @return   ceBtree *
+**/
+ceBtree *ceRBtree_Init(
+        ceBtree_Compare (*cmpfn)(void *, void *),
+        void (*freefn)(ceBtreeNode *)) {
+    
+    ceBtree *tree = (ceBtree *)
+        malloc(sizeof(ceBtree));
+    
+    if (tree == NULL) {
+        return NULL;
+    }
+    
+    tree->root = NULL;
+    tree->cmpfn = cmpfn;
+    tree->freefn = freefn;
+    tree->is_redblack = 1;
+    
+    tree->insert = ceRBtree_Insert;
+    // FIXME
+    tree->remove = ceBtree_Remove;
     
     return tree;
 }
@@ -87,37 +121,52 @@ int ceBtree_KeyExists(ceBtree *tree, ceBtreeNode *start, void *key)
 * Perform a left rotation
 *
 * @param    ceBtree *tree
+* @param    ceBtreeNode *x  - Node to rotate. NULL for root.
 * @return   ceBtree_Status
 **/
-ceBtree_Status ceBtree_RotateLeft(ceBtree *tree)
+ceBtree_Status ceBtree_RotateLeft(ceBtree *tree, ceBtreeNode *x)
 {
-    ceBtreeNode *cur,
-                *oldroot;
+    ceBtreeNode *y;
     
-    // Can't rotate anymore
-    if (tree->root == NULL || tree->root->right == NULL) {
+    // If x is NULL, set to root
+    if (x == NULL) {
+        x = tree->root;
+    }
+    
+    // Can't rotate
+    if (tree->root == NULL || x->right == NULL) {
         return CE_BTREE_STATUS_OK;
     }
     
-    // Pointer to oldroot
-    oldroot = tree->root;
+    // y is x->right
+    y = x->right;
     
-    // Set new root
-    tree->root = tree->root->right;
-    tree->root->parent = NULL;
-    
-    // Break apart from tree
-    oldroot->right = NULL;
-    
-    // Find left-most leaf
-    cur = tree->root;
-    while (cur->left != NULL) {
-        cur = cur->left;
+    // Move y's left subtree to x's right subtree, to free it up
+    x->right = y->left;
+    if (x->right != NULL) {
+        x->right->parent = x;
     }
     
-    // Link trees back together
-    cur->left = oldroot;
-    cur->left->parent = cur;
+    // Move x to y's left subtree
+    y->left = x;
+    if (x == tree->root) {
+        // If x is the root node
+        y->parent = NULL;
+        x->parent = y;
+        tree->root = y;
+    } else {
+        if (x->parent->left == x) {
+            // x is the left subtree of it's parent
+            x->parent->left = y;
+        } else {
+            // x is the right subtree of it's parent
+            x->parent->right = y;
+        }
+        
+        // Setup parent pointers
+        y->parent = x->parent;
+        x->parent = y;
+    }
     
     return CE_BTREE_STATUS_OK;
 }
@@ -126,37 +175,52 @@ ceBtree_Status ceBtree_RotateLeft(ceBtree *tree)
 * Perform a right rotation
 *
 * @param    ceBtree *tree
+* @param    ceBtreeNode *x  - Node to rotate. NULL for root.
 * @return   ceBtree_Status
 **/
-ceBtree_Status ceBtree_RotateRight(ceBtree *tree)
+ceBtree_Status ceBtree_RotateRight(ceBtree *tree, ceBtreeNode *x)
 {
-    ceBtreeNode *cur,
-                *oldroot;
+    ceBtreeNode *y;
     
-    // Can't rotate anymore
-    if (tree->root == NULL || tree->root->left == NULL) {
+    // If x is NULL, set to root
+    if (x == NULL) {
+        x = tree->root;
+    }
+    
+    // Can't rotate
+    if (tree->root == NULL || x->left == NULL) {
         return CE_BTREE_STATUS_OK;
     }
     
-    // Pointer to oldroot
-    oldroot = tree->root;
+    // y is x->left
+    y = x->left;
     
-    // Set new root
-    tree->root = tree->root->left;
-    tree->root->parent = NULL;
-    
-    // Break apart from tree
-    oldroot->left = NULL;
-    
-    // Find right-most leaf
-    cur = tree->root;
-    while (cur->right != NULL) {
-        cur = cur->right;
+    // Move y's right subtree to x's left subtree, to free it up
+    x->left = y->right;
+    if (x->left != NULL) {
+        x->left->parent = x;
     }
     
-    // Link trees back together
-    cur->right = oldroot;
-    cur->right->parent = cur;
+    // Move x to y's right subtree
+    y->right = x;
+    if (x == tree->root) {
+        // If x is the root node
+        y->parent = NULL;
+        x->parent = y;
+        tree->root = y;
+    } else {
+        if (x->parent->left == x) {
+            // x is the left subtree of it's parent
+            x->parent->left = y;
+        } else {
+            // x is the right subtree of it's parent
+            x->parent->right = y;
+        }
+        
+        // Setup parent pointers
+        y->parent = x->parent;
+        x->parent = y;
+    }
     
     return CE_BTREE_STATUS_OK;
 }

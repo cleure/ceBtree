@@ -52,6 +52,10 @@ struct ceBtree {
     // Free function pointer
     void (*freefn)(ceBtreeNode *);
     
+    // Insert and Remove function pointers
+    ceBtree_Status (*insert)(struct ceBtree *tree, void *key, void *data, int replace);
+    ceBtree_Status (*remove)(struct ceBtree *tree, ceBtreeNode *start, void *key);
+    
     // Is red black tree?
     uint8_t is_redblack;
 };
@@ -62,13 +66,22 @@ ceBtree *ceBtree_Init(
     ceBtree_Compare (*cmpfn)(void *, void *),
     void (*freefn)(ceBtreeNode *));
 
+ceBtree *ceRBtree_Init(
+        ceBtree_Compare (*cmpfn)(void *, void *),
+        void (*freefn)(ceBtreeNode *));
+
+// Binary Tree Insert/Remove
 ceBtree_Status ceBtree_Insert(ceBtree *tree, void *key, void *data, int replace);
 ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key);
+
+// Red Black Tree Insert/Remove
+ceBtree_Status ceRBtree_Insert(ceBtree *tree,void *key, void *data, int replace);
+
 int ceBtree_KeyExists(ceBtree *tree, ceBtreeNode *start, void *key);
 
 // Rotations
-ceBtree_Status ceBtree_RotateLeft(ceBtree *tree);
-ceBtree_Status ceBtree_RotateRight(ceBtree *tree);
+ceBtree_Status ceBtree_RotateLeft(ceBtree *tree, ceBtreeNode *x);
+ceBtree_Status ceBtree_RotateRight(ceBtree *tree, ceBtreeNode *x);
 
 // Functions, for converting Btree to Array
 ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len);

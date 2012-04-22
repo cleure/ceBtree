@@ -25,7 +25,8 @@ objects :=\
 tests :=\
 	build/tests/01-ints\
 	build/tests/02-ints\
-	build/tests/03-strings
+	build/tests/03-strings\
+	build/tests/04-rbtree
 
 shared := build/btree.so
 
@@ -57,6 +58,9 @@ build/tests/02-ints: $(shared) tests/02-ints.c
 
 build/tests/03-strings: $(shared) tests/03-strings.c
 	$(cc) $(cflags) $(objects) tests/03-strings.c -o $@
+
+build/tests/04-rbtree: $(shared) tests/04-rbtree.c
+	$(cc) $(cflags) $(objects) tests/04-rbtree.c -o $@
 
 clean:
 	rm -f $(objects)
