@@ -49,11 +49,8 @@ int main(int argc, char **argv)
     
     cur = tree->root;
     
-    i = 0;
-    while (i < 42) {
-        tree->remove(tree, NULL, (void *)&i);
-        i++;
-    }
+    i = 41;
+    tree->remove(tree, NULL, (void *)&i);
     
     int len;
     array = ceBtreeToArray(tree, tree->root, &len);

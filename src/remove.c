@@ -79,7 +79,6 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                     }
                 }
             } else if (cur->left != NULL && cur->right != NULL) {
-                printf("Case 3\n");
 
                 // 3) Node has 2 children
                 ceBtreeNode *replacement = cur->right,
@@ -135,18 +134,6 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
                         // Normal case
                         parent = cur->parent;
                         cur = cur->left;
-                        
-                        /*
-                        
-                        Delete 14:
-                        
-                              16
-                            /    \
-                           14     19
-                          /  \    / \
-                         12  15  18  21
-                         
-                        */
                         
                         if (parent->left == cur->parent) {
                             free(parent->left);
