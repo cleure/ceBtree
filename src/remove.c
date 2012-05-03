@@ -82,8 +82,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
 
                 // 3) Node has 2 children
                 ceBtreeNode *replacement = cur->right,
-                            *right = NULL,
-                            *parent;
+                            *right = NULL;
                 
                 // Find a node with no left children
                 while (replacement->left != NULL) {

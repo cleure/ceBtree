@@ -1,3 +1,31 @@
 
-This is a simple Binary Tree library in C. Support for Red Black tree's via flag is being worked on.
+This is a simple Binary Tree library in C. Support for Red Black Trees is still under development (inserts work, but deletes haven't been implemented yet).
 
+Usage is fairly straightforward:
+
+void my_free_fn(ceBtreeNode *node) {
+    free(node->data);
+    node->key = NULL;
+    node->data = NULL;
+}
+
+...
+
+int i;
+ceBtree *tree = ceRBtree_Init(ceBtreeIntcmp, my_free_fn);
+ceBtreeNode *cur;
+
+for (i = 0; i < 100; i++) {
+    int *ptr = (int *)malloc(sizeof(int));
+    *ptr = i;
+    tree->insert(tree, (void *)ptr, (void *)ptr);
+}
+
+// Recurse down left side
+cur = tree->root;
+while (cur) {
+    printf("%d\n", *((int *)cur->key));
+    cur = cur->left;
+}
+
+ceBtree_Free(&tree);
