@@ -97,4 +97,7 @@ ceBtree_Compare ceBtreeIntcmp(void *A, void *B);
 void ceBtreeNode_Free(ceBtreeNode *node);
 void ceBtree_Free(ceBtree **tree);
 
+// Util functions
+int ceIsValidBtree(ceBtree *tree);
+
 #endif
