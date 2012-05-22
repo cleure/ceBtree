@@ -17,6 +17,10 @@ TODO: To simplify this, a "visited" variable could be added to the node struct,
 
 Other Solutions:
     - Hash table of visited nodes (pointer address could be the index)
+    - Implemented as recursive function. If the stack depth is limited to the
+      tree height, there's virtually no change of causing a stack overflow.
+    - Implemented as doubly linked list, which tree can be converted to in
+      O(n*log(n)) time.
 
 */
 

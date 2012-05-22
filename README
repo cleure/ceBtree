@@ -29,3 +29,12 @@ while (cur) {
 }
 
 ceBtree_Free(&tree);
+
+========================================================
+TODO
+========================================================
+
+- Implement delete for red black tree
+    - Macro-tize remove.c, and use that for both bet delete and rbtree delete
+- Unit testing framework to verify correctness
+- Utility function to verify red black tree
