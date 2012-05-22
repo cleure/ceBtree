@@ -48,8 +48,11 @@ int main(int argc, char **argv)
     }
     
     cur = tree->root;
-    
+
     i = 41;
+    tree->remove(tree, NULL, (void *)&i);
+
+    i = 38;
     tree->remove(tree, NULL, (void *)&i);
     
     int len;

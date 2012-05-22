@@ -17,7 +17,7 @@ void my_free_function(ceBtreeNode *node)
 int main(int argc, char **argv)
 {
     ceBtreeNode **array;
-    ceBtree *tree = ceBtree_Init(
+    ceBtree *tree = ceRBtree_Init(
         ceBtreeIntcmp,
         my_free_function);
     

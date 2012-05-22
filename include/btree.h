@@ -99,5 +99,6 @@ void ceBtree_Free(ceBtree **tree);
 
 // Util functions
 int ceIsValidBtree(ceBtree *tree);
+//int ceIsValidRBtree(ceBtree *tree);
 
 #endif
