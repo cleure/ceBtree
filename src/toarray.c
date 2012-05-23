@@ -121,7 +121,7 @@ ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len)
         return NULL;
     }
     
-    // Set cur to left-mode
+    // Set cur to left-most
     while (cur->left) {
         cur = cur->left;
     }
