@@ -38,3 +38,4 @@ TODO
     - Macro-tize remove.c, and use that for both bet delete and rbtree delete
 - Unit testing framework to verify correctness
 - Utility function to verify red black tree
+- Rename Btree to BStree, as it's less ambiguous (could be mistaken for B-tree instead of Binary Search Tree).
