@@ -2,27 +2,84 @@
 #include "helpers.h"
 #include <stdlib.h>
 
-/*
+/**
+* Helper function to get remaining work
+*
+* @param    ceBtree *tree
+* @param    ceBtreeNode *cur
+* @param    ceBtreeNode *last_append
+* @return   int, bits (1 == left_work, 2 == right_work)
+**/
+static int getWork(
+        ceBtree *tree,
+        ceBtreeNode *cur,
+        ceBtreeNode *last_append) {
+    
+    ceBtree_Compare res;
+    int left_work = 0,
+        right_work = 0;
 
-TODO: To simplify this, a "visited" variable could be added to the node struct,
-      and initialized to zero by default. Before this function loops, it sets
-      a variable to the current "visited" value. Once in the loop, it
-      increments the "visited" variable on each node, and filters the already
-      visited nodes out by comparing the equality of the nodes visited var, to
-      the visited var which was stored before looping.
-      
-      Downsides:
-        - Increased memory consumption for nodes
-        - Not thread safe without external mutexes
+    if (cur->left != NULL) {
+        res = tree->cmpfn(cur->left->key, last_append->key);
+        if (res == CE_BTREE_COMPARE_GT) {
+            left_work = 1;
+        }
+    }
 
-Other Solutions:
-    - Hash table of visited nodes (pointer address could be the index)
-    - Implemented as recursive function. If the stack depth is limited to the
-      tree height, there's virtually no change of causing a stack overflow.
-    - Implemented as doubly linked list, which tree can be converted to in
-      O(n*log(n)) time.
+    if (cur->right != NULL) {
+        res = tree->cmpfn(cur->right->key, last_append->key);
+        if (res == CE_BTREE_COMPARE_GT) {
+            right_work = 2;
+        }
+    }
 
-*/
+    return left_work | right_work;
+}
+
+/**
+* Helper function to check if node has been added.
+*
+* @param    ceBtree *tree
+* @param    ceBtreeNode *cur
+* @param    ceBtreeNode *last_append
+* @return   int, (1 == yes, 0 == no)
+**/
+static int nodeHasBeenAdded(
+        ceBtree *tree,
+        ceBtreeNode *cur,
+        ceBtreeNode *last_append) {
+    
+    ceBtree_Compare res;
+    if (cur == NULL || last_append == NULL) {
+        return 0;
+    }
+
+    res = tree->cmpfn(cur->key, last_append->key);
+    if (res == CE_BTREE_COMPARE_LT || res == CE_BTREE_COMPARE_EQ) {
+        return 1;
+    }
+
+    return 0;
+}
+
+#define APPEND_CUR_NODE()\
+    array[arraylen] = cur;\
+    last_append = cur;\
+    arraylen++;\
+    \
+    if (arraylen >= size) {\
+        size += CE_BTREE_ARRAY_CHUNK;\
+        tmp = (ceBtreeNode **)\
+              realloc(array, sizeof(ceBtreeNode *) * size);\
+        \
+        \
+        if (tmp == NULL) {\
+            free(array);\
+            return NULL;\
+        }\
+        \
+        array = tmp;\
+    }
 
 /**
 * Convert binary tree to array, in ascending order.
@@ -34,194 +91,79 @@ Other Solutions:
 **/
 ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len)
 {
-    // Auto set to tree root when NULL
-    if (root == NULL) {
-        root = tree->root;
-    }
-    
-    // Check error
-    if (root == NULL) {
-        *len = 0;
-        return NULL;
-    }
+    // If this function returns prematurly, len won't be an arbitrary
+    // number
+    *len = 0;
 
-    // These will be used for looping
-    int not_in_array, skip_lookup, alen;
-    
-    // Size of array, so we know when to reallocate
-    int size = CE_BTREE_ARRAY_CHUNK;
-    
-    // Used for binary search
-    int first, last;
-    
-    // Pointer to current node
-    ceBtreeNode *cur;
-    
-    // Destination array
-    ceBtreeNode **dest = (ceBtreeNode **)
-        malloc(sizeof(ceBtreeNode *) * size);
-    
-    // Used for reallocation
-    ceBtreeNode **tmp_dest = NULL;
-    
-    // Handle OOM
-    if (dest == NULL) {
+    // Check errors
+    if (tree == NULL || tree->root == NULL) {
         return NULL;
     }
     
-    // Initialize some variables
-    alen = 0;
-    skip_lookup = 0;
+    // Array, and tempory space
+    ceBtreeNode **array,
+                **tmp = NULL;
     
-    // Descend to left-most node
-    cur = root;
-    while (cur->left != NULL) {
+    // Nodes we keep pointers to
+    ceBtreeNode *cur = tree->root,
+                *rightmost = tree->root,
+                *last_append = NULL;
+    
+    // Array size/len
+    int size = CE_BTREE_ARRAY_CHUNK,
+        arraylen = 0;
+    
+    // Alloc
+    array = (ceBtreeNode **)
+            malloc(sizeof(ceBtreeNode *) * size);
+    
+    if (array == NULL) {
+        return NULL;
+    }
+    
+    // Set cur to left-mode
+    while (cur->left) {
         cur = cur->left;
     }
     
-    // Traverse tree
-    while (1) {
-        /* When skip_lookup is positive, we don't check that cur is already
-           in **dest, because that has already been confirmed. */
-        
-        if (!skip_lookup) {
-            not_in_array = 1;
-            
-            // Reset these
-            first = 0,
-            last = (alen - 1);
-            
-            /* Check if cur is in **dest. This uses Binary Search, as it's
-               much faster for anything with over 50 elements. It compares
-               the keys, using the compare function pointer on the tree. */
-            while (first <= last) {
-                int mid, res;
-                mid = (first + last) / 2;
-                res = tree->cmpfn(dest[mid]->key, cur->key);
-                
-                if (res == CE_BTREE_COMPARE_GT) {
-                    last = mid - 1;
-                } else if (res == CE_BTREE_COMPARE_LT) {
-                    first = mid + 1;
-                } else if (res == CE_BTREE_COMPARE_EQ) {
-                    not_in_array = 0;
-                    break;
-                }
-            }
-        } else {
-            // Reset skip_lookup
-            skip_lookup = 0;
-        }
-        
-        // Temporary variables
-        int left_in_array = 0,
-            right_in_array = 0;
-        
-        // No need to check if they're both NULL
-        if (cur->left != NULL || cur->right != NULL) {
-            
-            // Check if cur->left is in array, using Binary Search
-            if (cur->left != NULL) {
-                first = 0,
-                last = (alen - 1);
-            
-                // Binary search
-                while (first <= last) {
-                    int mid, res;
-                    mid = (first + last) / 2;
-                    res = tree->cmpfn(dest[mid]->key, cur->left->key);
-                    
-                    if (res == CE_BTREE_COMPARE_GT) {
-                        last = mid - 1;
-                    } else if (res == CE_BTREE_COMPARE_LT) {
-                        first = mid + 1;
-                    } else if (res == CE_BTREE_COMPARE_EQ) {
-                        left_in_array = 1;
-                        break;
-                    }
-                }
-            }
-            
-            // Check if cur->right is in array, using Binary Search
-            if (cur->right != NULL) {
-                first = 0,
-                last = (alen - 1);
-            
-                // Binary search
-                while (first <= last) {
-                    int mid, res;
-                    mid = (first + last) / 2;
-                    res = tree->cmpfn(dest[mid]->key, cur->right->key);
-                    
-                    if (res == CE_BTREE_COMPARE_GT) {
-                        last = mid - 1;
-                    } else if (res == CE_BTREE_COMPARE_LT) {
-                        first = mid + 1;
-                    } else if (res == CE_BTREE_COMPARE_EQ) {
-                        right_in_array = 1;
-                        break;
-                    }
-                }
-            }
-            
-        }
-        
-        /* If the node isn't already in the array, and the left side has
-           already been added, then add it. */
-        if (not_in_array && (cur->left == NULL || left_in_array)) {
-            dest[alen] = cur;
-            ++alen;
-            
-            // Make sure we have enough memory. Reallocate if needed
-            if (alen == size) {
-                size = size + CE_BTREE_ARRAY_CHUNK;
-                tmp_dest = realloc(dest,
-                    sizeof(ceBtreeNode *) * size);
-                
-                // Handle OOM
-                if (tmp_dest == NULL) {
-                    free(dest);
-                    return NULL;
-                }
-                
-                dest = tmp_dest;
-            }
-        }
-        
-        if (cur->left != NULL && !left_in_array) {
-            /* We've confirmed that cur->left is not in the array. Set
-               variables, and continue from top, where it will be added. */
-                
-            skip_lookup = 1;
-            not_in_array = 1;
-            cur = cur->left;
-            continue;
-        }
-        
-        if (cur->right != NULL && !right_in_array) {
-            /* We've confirmed that cur->right is not in the array. Set
-               variables, and continue from top, where it will be added. */
-                
-            skip_lookup = 1;
-            not_in_array = 1;
-            cur = cur->right;
-            continue;
-        }
-        
-        /* This will only be reached, and true, when every node has been added
-           to the array. */
-        if (cur == root) {
-            break;
-        }
-        
-        // Ascend to parent
-        cur = cur->parent;
+    // Set rightmost to right-most
+    while (rightmost->right) {
+        rightmost = rightmost->right;
     }
     
-    // Set value of len pointer
-    *len = alen;
+    // Append first
+    APPEND_CUR_NODE();
     
-    return dest;
+    while (1) {
+        int work = getWork(tree, cur, last_append);
+        if (!work) {
+            // Reached the final in-order node
+            if (cur == rightmost) {
+                break;
+            }
+        
+            cur = cur->parent;
+            if (!nodeHasBeenAdded(tree, cur, last_append)) {
+                APPEND_CUR_NODE();
+            }
+        } else if (work & 1) {
+            while (cur->left) {
+                cur = cur->left;
+            }
+            
+            APPEND_CUR_NODE();
+        } else if (work & 2) {
+            cur = cur->right;
+            if (cur->left && !nodeHasBeenAdded(tree, cur->left, last_append)) {
+                continue;
+            }
+            
+            APPEND_CUR_NODE();
+        }
+    }
+    
+    *len = arraylen;
+    return array;
 }
 
 /**

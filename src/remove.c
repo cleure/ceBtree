@@ -2,14 +2,6 @@
 #include "helpers.h"
 #include <stdlib.h>
 
-/*
-
-TODO: Clean this up. It might be possible to use #define to make function
-      macros to handle each individual case, which would clean things up
-      without having to jump to an actual function.
-
-*/
-
 /**
 * Delete Case 1 helper function
 *

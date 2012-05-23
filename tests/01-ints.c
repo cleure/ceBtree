@@ -31,6 +31,30 @@ void my_free_function(ceBtreeNode *node)
     node->data = NULL;
 }
 
+/*
+
+enum ceBtree_Compare {
+    CE_BTREE_COMPARE_EQ,
+    CE_BTREE_COMPARE_GT,
+    CE_BTREE_COMPARE_LT,
+    CE_BTREE_COMPARE_ERR
+};
+
+                     16
+                   /    \
+                  10    18
+                 /  \   / \
+                5   12 17  22
+               / \ /  \    / \
+              3  6 11  14  20 30
+             / \      /     \   \
+            1   4    13      21  41
+                                 /
+                                38
+
+*/
+
+
 int main(int argc, char **argv)
 {
     ceBtreeNode *cur;
@@ -48,12 +72,6 @@ int main(int argc, char **argv)
     }
     
     cur = tree->root;
-
-    i = 41;
-    tree->remove(tree, NULL, (void *)&i);
-
-    i = 38;
-    tree->remove(tree, NULL, (void *)&i);
     
     int len;
     array = ceBtreeToArray(tree, tree->root, &len);
