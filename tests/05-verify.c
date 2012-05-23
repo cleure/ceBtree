@@ -16,7 +16,6 @@ void my_free_function(ceBtreeNode *node)
 
 int main(int argc, char **argv)
 {
-    ceBtreeNode **array;
     ceBtree *tree = ceRBtree_Init(
         ceBtreeIntcmp,
         my_free_function);
@@ -30,8 +29,6 @@ int main(int argc, char **argv)
     }
     
     printf("Is Valid BST?: %d\n", ceIsValidBtree(tree));
-    
-    ceBtreeToArray_Free(&array);
     ceBtree_Free(&tree);
 
     return 0;

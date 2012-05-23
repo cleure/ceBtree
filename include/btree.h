@@ -84,7 +84,7 @@ ceBtree_Status ceBtree_RotateLeft(ceBtree *tree, ceBtreeNode *x);
 ceBtree_Status ceBtree_RotateRight(ceBtree *tree, ceBtreeNode *x);
 
 // Functions, for converting Btree to Array
-ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len);
+ceBtreeNode **ceBtreeToArray(ceBtree *tree, int *len);
 void ceBtreeToArray_Free(ceBtreeNode ***array);
 
 // String compare

@@ -39,7 +39,7 @@ int main(int argc, char **argv)
         ++i;
     }
     
-    array = ceBtreeToArray(tree, NULL, &l);
+    array = ceBtreeToArray(tree, &l);
     for (i = 0; i < l; ++i) {
         printf("%s\n", (char *)array[i]->key);
     }

@@ -84,12 +84,12 @@ static int nodeHasBeenAdded(
 /**
 * Convert binary tree to array, in ascending order.
 *
-* @param    ceBtreeNode *root
+* @param    ceBtree *tree
 * @param    int *len
 *               - Pointer to int, which will hold array len
 * @return   ceBtreeNode **
 **/
-ceBtreeNode **ceBtreeToArray(ceBtree *tree, ceBtreeNode *root, int *len)
+ceBtreeNode **ceBtreeToArray(ceBtree *tree, int *len)
 {
     // If this function returns prematurly, len won't be an arbitrary
     // number

@@ -132,8 +132,7 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key)
     }
 
     int res;
-    ceBtreeNode *cur, *parent;
-    cur = start;
+    ceBtreeNode *cur = start;
     
     while (cur != NULL) {
     
