@@ -54,6 +54,38 @@ enum ceBtree_Compare {
 
 */
 
+/*
+
+//
+// In-Order traversal, by converting tree to threaded binary tree
+//
+void in_order(ceBtreeNode *node)
+{
+    if (node == NULL) return;
+    ceBtreeNode *cur = node,
+                *pre;
+    
+    while (cur != NULL) {
+        if (cur->left == NULL) {
+            printf("%d\n", *((int *)cur->key));
+            cur = cur->right;
+        } else {
+            pre = cur->left;
+            while (pre->right != NULL && pre->right != cur) {
+                pre = pre->right;
+            }
+            
+            if (pre->right == NULL) {
+                pre->right = cur;
+                cur = cur->left;
+            } else {
+                pre->right = NULL;
+                printf("%d\n", *((int *)cur->key));
+                cur = cur->right;
+            }
+        }
+    }
+}*/
 
 int main(int argc, char **argv)
 {
