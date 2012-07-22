@@ -1,6 +1,6 @@
 
 cc := gcc
-cflags := -Wall -g -I./include -finline-functions
+cflags := -Wall -g -I./include -std=c99 -O2
 
 src/%.c:
 	$@

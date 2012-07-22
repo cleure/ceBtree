@@ -2,19 +2,6 @@
 #include "helpers.h"
 #include <stdlib.h>
 
-/*
-
-TODO:
-    - Implement as Red/Black tree, when flag set
-
-How to implement red/black trees:
-    - insert.c could be macro-tized, for both binary tree and
-      red black trees. Function pointers on the tree struct would
-      point to the correct insert function.
-    - Insert function could use if/else statements...
-
-*/
-
 /**
 * Initialize a new btree.
 *
@@ -87,34 +74,106 @@ ceBtree *ceRBtree_Init(
 **/
 int ceBtree_KeyExists(ceBtree *tree, ceBtreeNode *start, void *key)
 {
+    if (tree == NULL || tree->root == NULL) {
+        return NULL;
+    }
+
     // Auto set to tree root when NULL
     if (start == NULL) {
         start = tree->root;
     }
+
+    ceBtreeNode *cur = tree->root;
+    ceBtree_Status cmp;
     
-    ceBtreeNode *cur = start;
-    int res;
-    
-    while (1) {
-        res = tree->cmpfn(key, cur->key);
-        if (res == CE_BTREE_COMPARE_GT) {
-            if (cur->right == NULL) {
-                return 0;
-            }
-            
+    while (NULL != cur) {
+        cmp = tree->cmpfn(key, cur->key);
+        
+        if (cmp == CE_BTREE_COMPARE_GT) {
             cur = cur->right;
-        } else if (res == CE_BTREE_COMPARE_LT) {
-            if (cur->left == NULL) {
-                return 0;
-            }
-            
+        } else if (cmp == CE_BTREE_COMPARE_LT) {
             cur = cur->left;
-        } else if (res == CE_BTREE_COMPARE_EQ) {
+        } else if (cmp == CE_BTREE_COMPARE_EQ) {
             return 1;
+        } else {
+            break;
         }
     }
     
     return 0;
+}
+
+/**
+* Search tree for node. Retuns NULL on error, or if not found.
+*
+* @param    ceBtree *tree
+* @param    void *key
+* @return   ceBteeNode *
+**/
+ceBtreeNode *ceBtree_Find(ceBtree *tree, void *key)
+{
+    if (tree == NULL || tree->root == NULL) {
+        return NULL;
+    }
+
+    ceBtreeNode *cur = tree->root;
+    ceBtree_Status cmp;
+    
+    while (NULL != cur) {
+        cmp = tree->cmpfn(key, cur->key);
+        
+        if (cmp == CE_BTREE_COMPARE_GT) {
+            cur = cur->right;
+        } else if (cmp == CE_BTREE_COMPARE_LT) {
+            cur = cur->left;
+        } else if (cmp == CE_BTREE_COMPARE_EQ) {
+            return cur;
+        } else {
+            break;
+        }
+    }
+    
+    return NULL;
+}
+
+/**
+* Find minumum.
+*
+* @param    ceBtree *tree
+* @return   ceBtreeNode *
+**/
+ceBtreeNode *ceBtree_Min(ceBtree *tree)
+{
+    if (tree == NULL || tree->root == NULL) {
+        return NULL;
+    }
+    
+    ceBtreeNode *cur = tree->root;
+    while (cur->left) {
+        cur = cur->left;
+    }
+    
+    return cur;
+}
+
+/**
+* Find maximum.
+*
+* @param    ceBtree *tree
+* @return   ceBtreeNode *
+**/
+ceBtreeNode *ceBtree_Max(ceBtree *tree)
+{
+    if (tree == NULL || tree->root == NULL) {
+        return NULL;
+    }
+    
+    ceBtreeNode *cur = tree->root;
+    while (cur->right) {
+        cur = cur->right;
+    }
+    
+    return cur;
 }
 
 /**

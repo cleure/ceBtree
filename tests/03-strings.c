@@ -24,6 +24,7 @@ int main(int argc, char **argv)
 {
     int i = 0,
         l = (sizeof(table) / sizeof(table[0]));
+    
     ceBtree *tree;
     ceBtreeNode **array;
     

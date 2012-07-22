@@ -87,6 +87,54 @@ void in_order(ceBtreeNode *node)
     }
 }*/
 
+
+/*
+
+    // TODO: functional version of this:
+    //
+    // ceBtreeTrav *t = initTraversal(tree);
+    // ceBtreeNode *cur;
+    // 
+    // while ((cur = traverseNext(t)) != NULL) {
+    //      do_something(cur);
+    // }
+    //
+
+    while (1) {
+        if (cur) {
+            // Push
+            stack[stacklen++] = cur;
+            cur = cur->left;
+        } else {
+            if (stacklen == 0) {
+                break;
+            } else {
+                // Pop
+                cur = stack[--stacklen];
+                
+                // Append Node
+                array[arraylen++] = cur;
+                
+                // Allocate mode memory?
+                if (arraylen >= size) {
+                    size += CE_BTREE_ARRAY_CHUNK;
+                    tmp = (ceBtreeNode **)
+                        realloc(array, sizeof(ceBtreeNode *) * size);
+
+                    if (tmp == NULL) {
+                        goto cleanup_error;
+                    }
+        
+                    array = tmp;
+                }
+                
+                cur = cur->right;
+            }
+        }
+    }
+
+*/
+
 int main(int argc, char **argv)
 {
     ceBtreeNode *cur;

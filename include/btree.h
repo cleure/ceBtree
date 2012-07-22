@@ -77,7 +77,10 @@ ceBtree_Status ceBtree_Remove(ceBtree *tree, ceBtreeNode *start, void *key);
 // Red Black Tree Insert/Remove
 ceBtree_Status ceRBtree_Insert(ceBtree *tree,void *key, void *data, int replace);
 
+ceBtreeNode *ceBtree_Min(ceBtree *tree);
+ceBtreeNode *ceBtree_Max(ceBtree *tree);
 int ceBtree_KeyExists(ceBtree *tree, ceBtreeNode *start, void *key);
+ceBtreeNode *ceBtree_Find(ceBtree *tree, void *key);
 
 // Rotations
 ceBtree_Status ceBtree_RotateLeft(ceBtree *tree, ceBtreeNode *x);
